@@ -28,8 +28,24 @@ protected:
 	}
 };
 
+TEST_F(test_SuffixTree, TestEdgeComparison){
+	shared_ptr<edge> a (new edge);
+	a->text = "ACA";
+	shared_ptr<edge> b (new edge);
+	b->text = "AAAAAA";
+	shared_ptr<edge> c (new edge);
+	c->text = "C";
+	ASSERT_TRUE(b < a);
+	ASSERT_TRUE(a < c);
+	ASSERT_FALSE(c < b);
+	ASSERT_TRUE(c > b);
+}
+
 TEST_F(test_SuffixTree, TestBuildTree){
-    SuffixTree myobj;
+    SuffixTree mytree;
+
+	string genome = "ACACAGT";
+	// shared_ptr<s_tree> tree = mytree.BuildTr ee(genome);
     
     ASSERT_EQ(4, 4);
 }

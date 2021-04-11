@@ -6,16 +6,34 @@
 #include <vector>
 #include <string>
 #include <queue>
-#include <map>
+#include <vector>
 #include <iostream>
 
 using namespace std;
 
-// Node in the Suffix Tree representing 
-struct STree{
-  map<char, shared_ptr<STree>> children;
+struct edge;
+
+// Node in the Suffix Tree 
+struct s_tree{
+  vector<edge> edges;
   int start;
   int root_start; // TODO: Do I want this?
+};
+
+struct edge{
+  string text;
+
+  bool operator() (shared_ptr<edge> a, shared_ptr<edge> b) {
+    int j = min(a->text.size(), b->text.size());
+    for (int i=0; i<j; i++) {
+      if (a->text[i] < b->text[i]) {
+        return true;
+      } else if (a->text[i] > b->text[i]) {
+        return false;
+      }
+    }
+    return j == a->text.size();
+  }
 };
 
 // This stores relevant information about the result
@@ -29,10 +47,10 @@ class SuffixTree{
 public:
   SuffixTree();
   ~SuffixTree();
-  shared_ptr<STree> BuildTree(string genome);
-  shared_ptr<Substring> FindTopSubstring(shared_ptr<STree> tree, string sequence);
-  vector<shared_ptr<Substring>> FindTopNSubstrings(shared_ptr<STree> tree, string sequence, int n);
-  vector<vector<shared_ptr<Substring>>> FindBulkTopNSubstrings(shared_ptr<STree> tree, string sequence);
+  shared_ptr<s_tree> BuildTree(string genome);
+  shared_ptr<Substring> FindTopSubstring(shared_ptr<s_tree> tree, string sequence);
+  vector<shared_ptr<Substring>> FindTopNSubstrings(shared_ptr<s_tree> tree, string sequence, int n);
+  vector<vector<shared_ptr<Substring>>> FindBulkTopNSubstrings(shared_ptr<s_tree> tree, string sequence);
 
     
 private:

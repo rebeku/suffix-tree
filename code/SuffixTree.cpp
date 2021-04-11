@@ -8,6 +8,6 @@ SuffixTree::~SuffixTree(){
     
 }
 
-shared_ptr<STree> SuffixTree::BuildTree(string genome){
+shared_ptr<s_tree> SuffixTree::BuildTree(string genome){
     return NULL;
 }
