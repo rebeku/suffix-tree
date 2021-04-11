@@ -22,8 +22,9 @@ struct s_tree{
 
 struct edge{
   string text;
+  shared_ptr<s_tree> dst;
 
-  bool operator() (shared_ptr<edge> a, shared_ptr<edge> b) {
+  friend bool operator< (const shared_ptr<edge> a, const shared_ptr<edge> b) {
     int j = min(a->text.size(), b->text.size());
     for (int i=0; i<j; i++) {
       if (a->text[i] < b->text[i]) {
