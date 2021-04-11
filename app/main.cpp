@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../code/Empty.h"
+#include "../code/SuffixTree.h"
 
 using namespace std;
 

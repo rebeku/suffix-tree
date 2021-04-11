@@ -1,6 +1,8 @@
 # exclude everything
 build/*
 ipch
+notebooks/.ipynb_checkpoints
+.vscode/settings.json
 
 # exception to the rule
 !build/.gitkeep 

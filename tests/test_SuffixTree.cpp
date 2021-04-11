@@ -2,14 +2,14 @@
 // in your homework submission.
 // Chekout TEST_F functions bellow to learn what is being tested.
 #include <gtest/gtest.h>
-#include "../code/Empty.h"
+#include "../code/SuffixTree.h"
 
 #include <iostream>
 #include <string>
 
 using namespace std;
 
-class test_Empty : public ::testing::Test {
+class test_SuffixTree : public ::testing::Test {
 protected:
 	// This function runs only once before any TEST_F function
 	static void SetUpTestCase(){
@@ -28,14 +28,14 @@ protected:
 	}
 };
 
-TEST_F(test_Empty, TestEmptyFunc1){
-    Empty myobj;
+TEST_F(test_SuffixTree, TestBuildTree){
+    SuffixTree myobj;
     
-    ASSERT_EQ(2, myobj.EmptyFunc());
+    ASSERT_EQ(4, 4);
 }
 
-TEST_F(test_Empty, TestEmptyFunc2){
-    Empty myobj;
+TEST_F(test_SuffixTree, TestFindTopSubstring){
+    SuffixTree myobj;
     
-    ASSERT_EQ(3, myobj.EmptyFunc());
+    // ASSERT_EQ(NULL, myobj.FindTopSubstring());
 }
