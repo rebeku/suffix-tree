@@ -45,9 +45,14 @@ TEST_F(test_SuffixTree, TestBuildTree){
     SuffixTree mytree;
 
 	string genome = "ACACAGT";
-	// shared_ptr<s_tree> tree = mytree.BuildTr ee(genome);
+	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
     
-    ASSERT_EQ(4, 4);
+    ASSERT_TRUE(tree);
+
+	for (const auto& e: tree->edges) {
+		cout << e->text << endl;
+	}
+	ASSERT_EQ(tree->edges.size(), 4);
 }
 
 TEST_F(test_SuffixTree, TestFindTopSubstring){

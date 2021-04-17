@@ -15,9 +15,8 @@ struct edge;
 
 // Node in the Suffix Tree 
 struct s_tree{
-  vector<edge> edges;
+  vector<shared_ptr<edge>> edges;
   int start;
-  int root_start; // TODO: Do I want this?
 };
 
 struct edge{
@@ -37,12 +36,21 @@ struct edge{
   }
 };
 
+struct edge_match {
+  int e_chars = 0; // numbers of characters into the edge that match
+  int s_chars = 0; // number of characters into the original suffix that match
+  shared_ptr<edge> matched = NULL;
+
+  edge_match(){}
+};
+
 // This stores relevant information about the result
 // of a substring match
 struct Substring{
   int start[2]; // start index in longer and shorter string
   int length;
 };
+
 
 class SuffixTree{
 public:
@@ -53,9 +61,26 @@ public:
   vector<shared_ptr<Substring>> FindTopNSubstrings(shared_ptr<s_tree> tree, string sequence, int n);
   vector<vector<shared_ptr<Substring>>> FindBulkTopNSubstrings(shared_ptr<s_tree> tree, string sequence);
 
-    
 private:
-  int empty_count;
+  
+  // edge_match stores pertinent information about
+  // how far a suffix matches an edge.
+  
+  // init_node creates a new node
+  shared_ptr<s_tree> init_node();
+
+  // count_match_chars counts the number of matching chars
+  // start from the beginning of boths strings.
+  int count_match_chars(string a, string b);
+
+  // find *suffix* place in *tree* starting from 
+  // the *s_start*th char of *suffix*
+  // use *s_start* = 0 to search the full suffix
+  // this param is included for easy recursive calls
+  edge_match find(shared_ptr<s_tree> tree, string suffix, int s_start);
+
+  shared_ptr<s_tree> split(edge& e, string suffix);
+  void insert(shared_ptr<s_tree> tree, string suffix, int index); 
 };
 
 #endif // EMPTY_H__
