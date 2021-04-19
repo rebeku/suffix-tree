@@ -68,6 +68,9 @@ private:
   
   // init_node creates a new node
   shared_ptr<s_tree> init_node();
+  
+  // init_edge creates a new node
+  shared_ptr<edge> init_edge(string text, shared_ptr<s_tree> dst);
 
   // count_match_chars counts the number of matching chars
   // start from the beginning of boths strings.
@@ -79,7 +82,12 @@ private:
   // this param is included for easy recursive calls
   edge_match find(shared_ptr<s_tree> tree, string suffix, int s_start);
 
-  shared_ptr<s_tree> split(edge& e, string suffix);
+  // helper function for inserting a new suffix
+  // the edge will maintain the common chars shared
+  // the edge and the new suffix, but will point to a new node
+  // which will fork between the remaining chars of the old edge
+  // and the chars for the suffix.
+  void split(edge_match match, string suffix);
   void insert(shared_ptr<s_tree> tree, string suffix, int index); 
 };
 
