@@ -180,3 +180,28 @@ TEST_F(test_SuffixTree, TestFindTopSubstringInvalidChars){
 	match = mytree.FindTopSubstring(tree, "PFOOBR!");
 	EXPECT_TRUE(match==NULL);
 }
+
+TEST_F(test_SuffixTree, TestFindTopNSubstrings) {
+	SuffixTree mytree;
+
+	string genome = "ACACAGT";
+	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+    
+    EXPECT_TRUE(tree);
+
+	string seq = "CACA";
+	vector<shared_ptr<Substring>> matches = mytree.FindTopNSubstrings(tree, seq, 3);
+	ASSERT_EQ(matches.size(), 3);
+
+	EXPECT_EQ(matches[0]->length, 4);
+	EXPECT_TRUE(expect_in(matches[0]->seq, 0, "seq 0"));
+	EXPECT_TRUE(expect_in(matches[0]->tree, 1, "tree 0"));
+
+	EXPECT_EQ(matches[1]->length, 3);
+	EXPECT_TRUE(expect_in(matches[1]->seq, 1, "seq 1"));
+	EXPECT_TRUE(expect_in(matches[1]->tree, 0, "tree 1"));
+
+	EXPECT_EQ(matches[2]->length, 2);
+	EXPECT_TRUE(expect_in(matches[2]->seq, 2, "seq 2"));
+	EXPECT_TRUE(expect_in(matches[2]->tree, 1, "tree 2"));
+}

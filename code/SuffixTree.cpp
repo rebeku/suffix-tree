@@ -161,7 +161,7 @@ vector<shared_ptr<Substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> 
 
           // no need to continue searching if the best matches
           // have more characters than any remaining suffix of *seq*
-          if (q.top().s_chars > seq.length() - i - 1) {
+          if (q.size() == n && q.top().s_chars > seq.length() - i - 1) {
             break;
           }
       }
