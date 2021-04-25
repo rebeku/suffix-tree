@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string>
+#include <queue>
 
 using namespace std;
 
@@ -37,6 +38,29 @@ protected:
 	}
 };
 
+TEST_F(test_SuffixTree, TestEdgeMatchComparison){
+	edge_match a;
+	a.s_chars = 5;
+	edge_match b;
+	b.s_chars = 3;
+	edge_match c;
+	c.s_chars = 10;
+
+	priority_queue<edge_match, vector<edge_match>, std::greater<edge_match>> q;
+	q.push(a);
+	q.push(b);
+	q.push(c);
+
+	EXPECT_EQ(q.top().s_chars, b.s_chars);
+	q.pop();
+
+	EXPECT_EQ(q.top().s_chars, a.s_chars);
+	q.pop();
+	
+	EXPECT_EQ(q.top().s_chars, c.s_chars);
+
+}
+
 TEST_F(test_SuffixTree, TestEdgeComparison){
 	shared_ptr<edge> a (new edge);
 	a->text = "ACA";
@@ -48,6 +72,8 @@ TEST_F(test_SuffixTree, TestEdgeComparison){
 	EXPECT_TRUE(a < c);
 	EXPECT_FALSE(c < b);
 	EXPECT_TRUE(c > b);
+
+
 }
 
 TEST_F(test_SuffixTree, TestBuildTree){

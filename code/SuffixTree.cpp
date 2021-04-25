@@ -143,16 +143,62 @@ shared_ptr<s_tree> SuffixTree::BuildTree(string genome){
     }
     return tree;
 }
+vector<shared_ptr<Substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> tree, string seq, int n) {
+      edge_match cur_match;
+	  priority_queue<edge_match, vector<edge_match>, std::greater<edge_match>> q;
+
+      for (int i = 0; i<seq.length(); i++) {
+          cur_match = find(tree, seq.substr(i, string::npos), 0);
+          if (cur_match.matched == NULL) {
+              continue;
+          }
+          cur_match.s_start = i;
+          q.push(cur_match);
+
+          if (q.size() > n) {
+              q.pop();
+          }
+
+          // no need to continue searching if the best matches
+          // have more characters than any remaining suffix of *seq*
+          if (q.top().s_chars > seq.length() - i - 1) {
+            break;
+          }
+      }
+
+      // there may not b *n* matches
+      // so reduce the size of *n* if needed
+      n = q.size();
+      vector<shared_ptr<Substring>> ret(n);
+      int i = 1;
+
+      while (!q.empty()) {
+        cur_match = q.top();
+        q.pop();
+
+        vector<int> tree_start = cur_match.matched->dst->starts;
+        vector<int> seq_start {cur_match.s_start};
+        ret[n - i] = shared_ptr<Substring> (new Substring(tree_start, seq_start, cur_match.s_chars));
+        i++;
+      }
+      return ret;
+  }
 
   shared_ptr<Substring> SuffixTree::FindTopSubstring(shared_ptr<s_tree> tree, string seq) {
-      // TODO: Multiple best matches in string?
+    vector<shared_ptr<Substring>> v = FindTopNSubstrings(tree, seq, 1);
+    if (v.size() == 0) {
+        return NULL;
+    }
+    return v[0];
+  }
 
+  shared_ptr<Substring> FindToppppSubstring(shared_ptr<s_tree> tree, string seq) {
       edge_match best_match;
       edge_match cur_match;
       int best_match_start;
 
       for (int i = 0; i<seq.length(); i++) {
-          cur_match = find(tree, seq.substr(i, string::npos), 0);
+          // cur_match = find(tree, seq.substr(i, string::npos), 0);
           // don't count chars at start of string that weren't matched
           if (cur_match.s_chars > best_match.s_chars) {
               best_match = cur_match;
