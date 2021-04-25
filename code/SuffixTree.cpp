@@ -168,11 +168,11 @@ shared_ptr<s_tree> SuffixTree::BuildTree(string genome){
             break;
           }
       }
-
-      // TODO: refactor to return locations of all matches
-      // for now get location of a match in genome
-      vector<int> tree_start = best_match.matched->dst->starts;
-      // TODO: fiind multiple vals if multiple matches
-      vector<int> seq_start {best_match_start};
-      return shared_ptr<Substring> (new Substring(tree_start, seq_start, best_match.s_chars));
+      if (best_match.matched) {
+        vector<int> tree_start = best_match.matched->dst->starts;
+        vector<int> seq_start {best_match_start};
+        return shared_ptr<Substring> (new Substring(tree_start, seq_start, best_match.s_chars));
+      } else {
+          return NULL;
+      }
   }

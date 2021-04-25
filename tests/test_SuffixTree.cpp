@@ -76,10 +76,13 @@ TEST_F(test_SuffixTree, TestFindTopSubstring){
 	shared_ptr<Substring> match;
 
 	for (int i = 0; i<genome.length(); i++) {
-		for (int j=i+1; j<genome.length(); j++) {
+		for (int j=i; j<genome.length(); j++) {
 			string seq = genome.substr(i, j-i);
 			cout << "seq: " << seq << endl;
 			match = mytree.FindTopSubstring(tree, seq);
+			if (match == NULL) {
+				continue;
+			}
 			EXPECT_EQ(match->length, j-i) << "Failed on i=" << i << " j=" << j << endl;
 
 			cout << "i: " << i << " j: " << j << "\nFound tree matches [";
