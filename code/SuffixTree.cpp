@@ -84,6 +84,7 @@ edge_match SuffixTree::find(shared_ptr<s_tree> tree, string suffix, int s_start)
     } else {
         // this is not a full match but it's 
         // the closest thing in the tree
+        // If there is no match at all this should return nothing
         return match;
     }
 }
@@ -144,27 +145,25 @@ shared_ptr<s_tree> SuffixTree::BuildTree(string genome){
 }
 
   shared_ptr<Substring> SuffixTree::FindTopSubstring(shared_ptr<s_tree> tree, string seq) {
+      // TODO: Multiple best matches in string?
+
       edge_match best_match;
       edge_match cur_match;
       int best_match_start;
 
       for (int i = 0; i<seq.length(); i++) {
-          cur_match = find(tree, seq, i);
+          cur_match = find(tree, seq.substr(i, string::npos), 0);
+          // don't count chars at start of string that weren't matched
           if (cur_match.s_chars > best_match.s_chars) {
               best_match = cur_match;
+              cout << "setting best e_chars: " <<  cur_match.e_chars << endl;
+              cout << "setting best s_chars: " <<  cur_match.s_chars << endl;
+              cout << "setting best match start: " << i << endl;
               best_match_start = i;
-              cout << "Updating best_match to " << i << endl;
           }
           // no need to continue searching if the longest substring
           // has more characters than any remaining suffix of *seq*
           if (best_match.s_chars > seq.length() - i - 1) {
-            cout << "breaking line 143: best_match.s_chars: " << best_match.s_chars << " i: " << i << endl;
-            cout << "best matched edge has text '" << best_match.matched->text << "'\n";
-            if (best_match.matched->dst) {
-                cout << "matched edge has dst" << endl;
-            } else {
-                cout << "Oh no!  Matched edge missing dst" << endl;
-            }
             break;
           }
       }

@@ -9,13 +9,13 @@
 
 using namespace std;
 
-void expect_in(vector<int> vec, int a, string label) {
+bool expect_in(vector<int> vec, int a, string label) {
 	for (int b: vec) {
 		if (b == a) {
-			return;
+			return true;
 		}
 	}
-	EXPECT_TRUE(false) << "Expected to find " << a << " in test case " << label;
+	return false;
 }
 
 class test_SuffixTree : public ::testing::Test {
@@ -62,10 +62,9 @@ TEST_F(test_SuffixTree, TestBuildTree){
 		cout << "Edge has text: " << e->text << endl;
 		
 	}
-	mytree.print(tree);
 }
 
-TEST_F(test_SuffixTree, TestFindTopSubstring){
+TEST_F(test_SuffixTree, TestFindTopSubstringPerfectMatch){
 	SuffixTree mytree;
 
 	string genome = "ACACAGT";
@@ -78,21 +77,55 @@ TEST_F(test_SuffixTree, TestFindTopSubstring){
 	for (int i = 0; i<genome.length(); i++) {
 		for (int j=i; j<genome.length(); j++) {
 			string seq = genome.substr(i, j-i);
-			cout << "seq: " << seq << endl;
 			match = mytree.FindTopSubstring(tree, seq);
 			if (match == NULL) {
 				continue;
 			}
 			EXPECT_EQ(match->length, j-i) << "Failed on i=" << i << " j=" << j << endl;
+			
+			string label = to_string(i) + "|" + to_string(j);
+			EXPECT_TRUE(expect_in(match->tree, i, label));
+			EXPECT_TRUE(expect_in(match->seq, 0, label));
+		}
+	}
+}
 
-			cout << "i: " << i << " j: " << j << "\nFound tree matches [";
+TEST_F(test_SuffixTree, TestFindTopSubstringIrrelevantPrefix){
+	SuffixTree mytree;
+
+	string genome = "ACACAGT";
+	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+    
+    EXPECT_TRUE(tree);
+
+	shared_ptr<Substring> match;
+
+	for (int i = 0; i<genome.length(); i++) {
+		// every substring of 2 chars or more will be the best match
+		for (int j=i+2; j<genome.length(); j++) {
+			string seq = "GGG" + genome.substr(i, j-i);
+			match = mytree.FindTopSubstring(tree, seq);
+			cout << "seq: " << seq << endl;
+			cout << "i: " << i << " j: " << j << " match->length: " << match->length;
+			cout << "\nFound tree matches [";
 			for (int i: match->tree) {
 				cout << i << ", ";
 			}
 			cout << "]\n";
+			
+			cout << "\nFound seq matches [";
+			for (int i: match->seq) {
+				cout << i << ", ";
+			}
+			cout << "]\n";
+
 			string label = to_string(i) + "|" + to_string(j);
-			expect_in(match->tree, i, label);
-			expect_in(match->seq, 0, label);
+			EXPECT_TRUE(expect_in(match->tree, i, label));
+			EXPECT_TRUE(expect_in(match->seq, 3, label));
+
+			// seq = "INVALID_CHARS" + seq;
+			// match = mytree.FindTopSubstring(tree, seq);
+			// EXPECT_EQ(match, NULL);
 		}
 	}
 }
