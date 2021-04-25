@@ -129,3 +129,28 @@ TEST_F(test_SuffixTree, TestFindTopSubstringIrrelevantPrefix){
 		}
 	}
 }
+
+TEST_F(test_SuffixTree, TestFindTopSubstringInvalidChars){
+	SuffixTree mytree;
+
+	string genome = "ACACAGT";
+	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+    
+    EXPECT_TRUE(tree);
+
+	shared_ptr<Substring> match;
+	match = mytree.FindTopSubstring(tree, "FCAG");
+	EXPECT_EQ(match->length, 3);
+	EXPECT_EQ(match->seq[0], 1);
+	EXPECT_EQ(match->tree[0], 3);
+
+
+	match = mytree.FindTopSubstring(tree, "CAGBBBACACA");
+	EXPECT_EQ(match->length, 5);
+	EXPECT_EQ(match->seq[0], 6);
+	EXPECT_EQ(match->tree[0], 0);
+
+
+	match = mytree.FindTopSubstring(tree, "PFOOBR!");
+	EXPECT_TRUE(match==NULL);
+}
