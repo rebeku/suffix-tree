@@ -16,7 +16,7 @@ struct edge;
 // Node in the Suffix Tree 
 struct s_tree{
   vector<shared_ptr<edge>> edges;
-  int start;
+  vector<int> starts; // this contains the indices of all starting chars of the genome that will lead to this node
 };
 
 struct edge{
@@ -47,8 +47,14 @@ struct edge_match {
 // This stores relevant information about the result
 // of a substring match
 struct Substring{
-  int start[2]; // start index in longer and shorter string
+  vector<int> tree; // starting pts in tree
+  vector<int> seq; // starting pts in seq
   int length;
+  Substring(vector<int> tree_start, vector<int> seq_start, int len){
+    tree = tree_start;
+    seq = seq_start;
+    length = len;
+  }
 };
 
 
@@ -60,6 +66,7 @@ public:
   shared_ptr<Substring> FindTopSubstring(shared_ptr<s_tree> tree, string sequence);
   vector<shared_ptr<Substring>> FindTopNSubstrings(shared_ptr<s_tree> tree, string sequence, int n);
   vector<vector<shared_ptr<Substring>>> FindBulkTopNSubstrings(shared_ptr<s_tree> tree, string sequence);
+  void print(shared_ptr<s_tree> tree);
 
 private:
   
@@ -87,7 +94,7 @@ private:
   // the edge and the new suffix, but will point to a new node
   // which will fork between the remaining chars of the old edge
   // and the chars for the suffix.
-  void split(edge_match match, string suffix);
+  void split(edge_match match, string suffix, int start);
   void insert(shared_ptr<s_tree> tree, string suffix, int index); 
 };
 

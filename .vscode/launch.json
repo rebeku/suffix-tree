@@ -23,7 +23,7 @@
                     "ignoreFailures": false
                 }
             ],
-            "miDebuggerPath": "/usr/bin/gdb"
+            "miDebuggerPath": "/usr/local/Cellar/gdb/10.1/bin/gdb"
         },
         {
             "name": "Run App",
@@ -44,7 +44,7 @@
                     "ignoreFailures": false
                 }
             ],
-            "miDebuggerPath": "/usr/bin/gdb"
+            "miDebuggerPath": "/usr/local/Cellar/gdb/10.1/bin/gdb"
         }
     ]
 }

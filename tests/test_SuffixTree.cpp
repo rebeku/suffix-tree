@@ -9,6 +9,15 @@
 
 using namespace std;
 
+void expect_in(vector<int> vec, int a, string label) {
+	for (int b: vec) {
+		if (b == a) {
+			return;
+		}
+	}
+	EXPECT_TRUE(false) << "Expected to find " << a << " in test case " << label;
+}
+
 class test_SuffixTree : public ::testing::Test {
 protected:
 	// This function runs only once before any TEST_F function
@@ -35,10 +44,10 @@ TEST_F(test_SuffixTree, TestEdgeComparison){
 	b->text = "AAAAAA";
 	shared_ptr<edge> c (new edge);
 	c->text = "C";
-	ASSERT_TRUE(b < a);
-	ASSERT_TRUE(a < c);
-	ASSERT_FALSE(c < b);
-	ASSERT_TRUE(c > b);
+	EXPECT_TRUE(b < a);
+	EXPECT_TRUE(a < c);
+	EXPECT_FALSE(c < b);
+	EXPECT_TRUE(c > b);
 }
 
 TEST_F(test_SuffixTree, TestBuildTree){
@@ -46,17 +55,41 @@ TEST_F(test_SuffixTree, TestBuildTree){
 
 	string genome = "ACACAGT";
 	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
-    
-    ASSERT_TRUE(tree);
+    EXPECT_TRUE(tree);
+	EXPECT_EQ(tree->edges.size(), 4);
 
 	for (const auto& e: tree->edges) {
-		cout << e->text << endl;
+		cout << "Edge has text: " << e->text << endl;
+		
 	}
-	ASSERT_EQ(tree->edges.size(), 4);
+	mytree.print(tree);
 }
 
 TEST_F(test_SuffixTree, TestFindTopSubstring){
-    SuffixTree myobj;
+	SuffixTree mytree;
+
+	string genome = "ACACAGT";
+	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
     
-    // ASSERT_EQ(NULL, myobj.FindTopSubstring());
+    EXPECT_TRUE(tree);
+
+	shared_ptr<Substring> match;
+
+	for (int i = 0; i<genome.length(); i++) {
+		for (int j=i+1; j<genome.length(); j++) {
+			string seq = genome.substr(i, j-i);
+			cout << "seq: " << seq << endl;
+			match = mytree.FindTopSubstring(tree, seq);
+			EXPECT_EQ(match->length, j-i) << "Failed on i=" << i << " j=" << j << endl;
+
+			cout << "i: " << i << " j: " << j << "\nFound tree matches [";
+			for (int i: match->tree) {
+				cout << i << ", ";
+			}
+			cout << "]\n";
+			string label = to_string(i) + "|" + to_string(j);
+			expect_in(match->tree, i, label);
+			expect_in(match->seq, 0, label);
+		}
+	}
 }
