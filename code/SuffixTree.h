@@ -109,7 +109,12 @@ private:
   // the *s_start*th char of *suffix*
   // use *s_start* = 0 to search the full suffix
   // this param is included for easy recursive calls
-  edge_match find(shared_ptr<s_tree> tree, string suffix, int s_start);
+  // *tree_start* is only used when building the tree.  It indicates
+  // the starting index in the genome to be tracked by each intermediate
+  // node in the tree.
+  // Note: when *tree_start* is not its default value this function
+  // will modify the tree.
+  edge_match find(shared_ptr<s_tree> tree, string suffix, int s_start, int tree_start=-1);
 
   // helper function for inserting a new suffix
   // the edge will maintain the common chars shared

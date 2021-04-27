@@ -55,12 +55,20 @@ int SuffixTree::count_match_chars(string a, string b) {
     return n;
 }
 
-edge_match SuffixTree::find(shared_ptr<s_tree> tree, string suffix, int s_start) {
+edge_match SuffixTree::find(shared_ptr<s_tree> tree, string suffix, int s_start, int tree_start) {
+    if (tree_start >= 0) {
+        tree->starts.push_back(tree_start);
+    }
     bool full_edge_match = false;
     bool full_suffix_match = false;
 
     edge_match match;
+
+    // save some basic stuff about where you are
+    // this may be a recursive call and there may be no further
+    // matches but you still need to know what was matched before
     match.src = tree;
+    match.s_chars = s_start;
 
     for (const auto& e: tree->edges) {
         if (e->text[0] == suffix[0]) {
@@ -94,7 +102,7 @@ edge_match SuffixTree::find(shared_ptr<s_tree> tree, string suffix, int s_start)
         shared_ptr<s_tree> next = match.matched->dst;
         suffix = suffix.substr(match.e_chars, string::npos);
         s_start = s_start + match.e_chars;
-        return find(next, suffix, s_start);
+        return find(next, suffix, s_start, tree_start);
     } else {
         // this is not a full match but it's 
         // the closest thing in the tree
@@ -132,7 +140,7 @@ void SuffixTree::insert(shared_ptr<s_tree> tree, string suffix, int start) {
     if (suffix.substr(0, 18) == "ATGAGATGAGAGGTGTCT") {
         cout << "Inserting suffix 6" << endl;
     }
-    edge_match match = find(tree, suffix, 0);
+    edge_match match = find(tree, suffix, 0, start);
     if (match.e_chars == 0) {
         tree = match.src;
         int i = tree->edges.size();
@@ -140,7 +148,8 @@ void SuffixTree::insert(shared_ptr<s_tree> tree, string suffix, int start) {
         // TODO: is there a less verbose way of doing this?
         shared_ptr<edge> e(new edge);
         tree->edges.push_back(e);
-        tree->edges[i]->text = suffix;
+        // don't re-save chars that are already matched by higher layers of tree
+        tree->edges[i]->text = suffix.substr(match.s_chars, string::npos);
 
         shared_ptr<s_tree> node = init_node();
         node->starts.push_back(start);
