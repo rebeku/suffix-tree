@@ -131,27 +131,9 @@ TEST_F(test_SuffixTree, TestFindTopSubstringIrrelevantPrefix){
 		for (int j=i+2; j<genome.length(); j++) {
 			string seq = "GGG" + genome.substr(i, j-i);
 			match = mytree.FindTopSubstring(tree, seq);
-			cout << "seq: " << seq << endl;
-			cout << "i: " << i << " j: " << j << " match->length: " << match->length;
-			cout << "\nFound tree matches [";
-			for (int i: match->tree) {
-				cout << i << ", ";
-			}
-			cout << "]\n";
-			
-			cout << "\nFound seq matches [";
-			for (int i: match->seq) {
-				cout << i << ", ";
-			}
-			cout << "]\n";
-
 			string label = to_string(i) + "|" + to_string(j);
 			EXPECT_TRUE(expect_in(match->tree, i, label));
 			EXPECT_TRUE(expect_in(match->seq, 3, label));
-
-			// seq = "INVALID_CHARS" + seq;
-			// match = mytree.FindTopSubstring(tree, seq);
-			// EXPECT_EQ(match, NULL);
 		}
 	}
 }
@@ -204,4 +186,64 @@ TEST_F(test_SuffixTree, TestFindTopNSubstrings) {
 	EXPECT_EQ(matches[2]->length, 2);
 	EXPECT_TRUE(expect_in(matches[2]->seq, 2, "seq 2"));
 	EXPECT_TRUE(expect_in(matches[2]->tree, 1, "tree 2"));
+}
+
+TEST_F(test_SuffixTree, TestWeirdThing) {
+	SuffixTree mytree;
+	
+	string genome = "CACGCAATGAGATGAGAGGTGTCTTCTCTGAAAGCACCGTTTAGAGTGGTGAGAATAAGTAGAGCTCACCGCGCAATGTTTGTCCACTAATTGGCTATAG";
+	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+
+	cout << "Built tree!\n";
+    EXPECT_TRUE(tree);
+	// mytree.print(tree);
+
+	string seq = "AGAGCT";
+	vector<shared_ptr<Substring>> match = mytree.FindTopNSubstrings(tree, seq, 3);
+	cout << match[0]->length << " " << match[0]->seq[0] << " " << match[0]->tree[0] << endl;
+	EXPECT_TRUE(match[0]->length == seq.length());
+}
+
+TEST_F(test_SuffixTree, TestFindBulkTopNSubstrings) {
+	SuffixTree mytree;
+	if (true) {
+		return;
+	}
+	
+	string genome = "CACGCAATGAGATGAGAGGTGTCTTCTCTGAAAGCACCGTTTAGAGTGGTGAGAATAAGTAGAGCTCACCGCGCAATGTTTGTCCACTAATTGGCTATAG";
+	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+
+	cout << "Built tree!\n";
+    EXPECT_TRUE(tree);
+
+	vector<string> sequences = {
+		"GAGGAACGAGGTGTCTTCCCC",
+		// There is a perfect match and it is not showing why?????
+		"AGAGCT",
+		"ATGCAATGTTAGTCCACTAATTGGCTATAG",
+		"CTTTAGAGTGGTGACGCGC",
+		"TATTGGTGTCTTCTCTGT"
+		};
+
+	vector<shared_ptr<Substring>> m;
+	for (string seq: sequences) {
+		m = mytree.FindTopNSubstrings(tree, seq, 3);
+	}
+	vector<vector<shared_ptr<Substring>>> bulk_matches = mytree.FindBulkTopNSubstrings(tree, sequences, 3);
+	ASSERT_EQ(bulk_matches.size(), 5);
+
+	vector<shared_ptr<Substring>> match;
+	for (int i=0; i<5; i++) {
+		match = bulk_matches[i];
+		EXPECT_TRUE(match[0]->length >= match[1]->length);
+		EXPECT_TRUE(match[1]->length >= match[2]->length);
+
+		for (int j = 0; j< 3; j++) {
+			cout << "i: " << i << " j: " << j << endl;
+			cout << "length: " << match[j]->length;
+			cout << " seq match: " << match[j]->seq[0];
+			cout << " number of tree matches: " << match[j]->tree.size();
+			cout << " first tree match: " << match[j]->tree[0] << endl << endl;
+		}
+	}
 }

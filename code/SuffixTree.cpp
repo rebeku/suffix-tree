@@ -15,17 +15,22 @@ shared_ptr<s_tree> SuffixTree::init_node() {
     return node;
 }
 
-
-void SuffixTree::print(shared_ptr<s_tree> tree) {
-    cout << "Node has starts [";
+void SuffixTree::print(shared_ptr<s_tree> tree, int depth) {
+    for (int i=0; i<depth; i++) {
+        cout <<"\t";
+    }
+    cout << "Node with depth " << depth << " has starts [";
     for (int i: tree->starts) {
         cout << i << ", ";
     }
     cout << "]" << endl;
     for (const auto& e: tree->edges) {
+        for (int i=0; i<depth; i++) {
+            cout <<"\t";
+        }
         cout << "Edge with label " << e->text << " points to: \n";
         if (e->dst) {
-            print(e->dst);
+            print(e->dst, depth+1);
         } else {
             cout << "nothing.  Whoops." << endl;
         }
@@ -55,6 +60,7 @@ edge_match SuffixTree::find(shared_ptr<s_tree> tree, string suffix, int s_start)
     bool full_suffix_match = false;
 
     edge_match match;
+    match.src = tree;
 
     for (const auto& e: tree->edges) {
         if (e->text[0] == suffix[0]) {
@@ -62,6 +68,14 @@ edge_match SuffixTree::find(shared_ptr<s_tree> tree, string suffix, int s_start)
             match.e_chars = count_match_chars(e->text, suffix);
             match.s_chars = match.e_chars + s_start;
             match.matched = e;
+
+            if (suffix.substr(0, 18) == "ATGAGATGAGAGGTGTCT") {
+                cout << "found a match for suffix 6\n";
+                cout << "e_chars: " << match.e_chars << endl;
+                cout << "s_chars: " << match.s_chars << endl;
+                cout << "null edge? " << (match.matched == NULL) << endl;
+            }
+            
 
             if (match.e_chars == e->text.length()) {
                 full_edge_match = true;
@@ -115,8 +129,12 @@ void SuffixTree::split(edge_match match, string suffix, int start){
 }
 
 void SuffixTree::insert(shared_ptr<s_tree> tree, string suffix, int start) {
+    if (suffix.substr(0, 18) == "ATGAGATGAGAGGTGTCT") {
+        cout << "Inserting suffix 6" << endl;
+    }
     edge_match match = find(tree, suffix, 0);
     if (match.e_chars == 0) {
+        tree = match.src;
         int i = tree->edges.size();
 
         // TODO: is there a less verbose way of doing this?
@@ -143,6 +161,7 @@ shared_ptr<s_tree> SuffixTree::BuildTree(string genome){
     }
     return tree;
 }
+
 vector<shared_ptr<Substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> tree, string seq, int n) {
       edge_match cur_match;
 	  priority_queue<edge_match, vector<edge_match>, std::greater<edge_match>> q;
@@ -192,32 +211,13 @@ vector<shared_ptr<Substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> 
     return v[0];
   }
 
-  shared_ptr<Substring> FindToppppSubstring(shared_ptr<s_tree> tree, string seq) {
-      edge_match best_match;
-      edge_match cur_match;
-      int best_match_start;
 
-      for (int i = 0; i<seq.length(); i++) {
-          // cur_match = find(tree, seq.substr(i, string::npos), 0);
-          // don't count chars at start of string that weren't matched
-          if (cur_match.s_chars > best_match.s_chars) {
-              best_match = cur_match;
-              cout << "setting best e_chars: " <<  cur_match.e_chars << endl;
-              cout << "setting best s_chars: " <<  cur_match.s_chars << endl;
-              cout << "setting best match start: " << i << endl;
-              best_match_start = i;
-          }
-          // no need to continue searching if the longest substring
-          // has more characters than any remaining suffix of *seq*
-          if (best_match.s_chars > seq.length() - i - 1) {
-            break;
-          }
-      }
-      if (best_match.matched) {
-        vector<int> tree_start = best_match.matched->dst->starts;
-        vector<int> seq_start {best_match_start};
-        return shared_ptr<Substring> (new Substring(tree_start, seq_start, best_match.s_chars));
-      } else {
-          return NULL;
-      }
+  vector<vector<shared_ptr<Substring>>> SuffixTree::FindBulkTopNSubstrings(shared_ptr<s_tree> tree, vector<string> sequences, int n) {
+      vector<vector<shared_ptr<Substring>>> ret;
+
+        for (auto &seq : sequences) {
+            cout << seq << endl;
+            ret.push_back(FindTopNSubstrings(tree, seq, n));
+        }
+      return ret;
   }

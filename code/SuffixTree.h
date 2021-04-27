@@ -40,7 +40,8 @@ struct edge_match {
   int e_chars = 0; // numbers of characters into the edge that match
   int s_chars = 0; // number of characters into the original suffix that match
   int s_start = -1; // first char of seq that is matched
-  shared_ptr<edge> matched = NULL;
+  shared_ptr<edge> matched = NULL; // matched edge
+  shared_ptr<s_tree> src = NULL; // source node of matched edge
 
   edge_match(){}
   friend bool operator> (const edge_match a, const edge_match b) {
@@ -86,8 +87,8 @@ public:
   shared_ptr<s_tree> BuildTree(string genome);
   shared_ptr<Substring> FindTopSubstring(shared_ptr<s_tree> tree, string sequence);
   vector<shared_ptr<Substring>> FindTopNSubstrings(shared_ptr<s_tree> tree, string sequence, int n);
-  vector<vector<shared_ptr<Substring>>> FindBulkTopNSubstrings(shared_ptr<s_tree> tree, string sequence);
-  void print(shared_ptr<s_tree> tree);
+  vector<vector<shared_ptr<Substring>>> FindBulkTopNSubstrings(shared_ptr<s_tree> tree, vector<string> sequences, int n);
+  void print(shared_ptr<s_tree> tree, int depth=0);
 
 private:
   
