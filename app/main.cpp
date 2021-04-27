@@ -16,7 +16,7 @@ shared_ptr<s_tree> read_tree(string fname) {
     // This file should just have one line so getline will read it into genome.
     getline (gFile, genome);
     gFile.close();
-    std::cout << "Read genome from file.  Length: " << genome.length() << endl;
+    std::cout << "Read genome from file '" << fname << "'.  Length: " << genome.length() << endl;
 
     auto start = chrono::system_clock::now();
     shared_ptr<s_tree> tree = MYTREE.BuildTree(genome);
@@ -27,13 +27,11 @@ shared_ptr<s_tree> read_tree(string fname) {
     return tree;
 }
 
-int main(){
-    // string fname = "../data/genome_5_10000_100_500_0.07_0.txt";
+int main(int argc, char** argv){
+    // string fname = "../data/genes_5_100000_1000_500_0.1.csv";
+    string fname = argv[1];
+    cout << "Reading test data from " << fname << endl;
 
-    // shared_ptr<s_tree> tree = read_tree(fname);
-    // std::cout << "Now matching genes from this genome...";
-
-    string fname = "../data/genes_5_10000_100_500_0.1.csv";
     shared_ptr<s_tree> tree;
 
     ifstream gFile(fname);
@@ -72,6 +70,10 @@ int main(){
 
         // time to load the next genome
         if (fname != source_g) {
+            if (n_total > 0) {
+                cout << "Accuracy rate so far:  " << float(n_correct) / float(n_total) << endl;
+                cout << "Loading next genome" << endl;
+            }
             fname = source_g;
             tree = read_tree(fname);
         }
@@ -87,19 +89,6 @@ int main(){
             cout << "Full row: " << row << endl;
         } else if (ss->tree[0] == backtrack_start) {
             n_correct++;
-        } else {
-            cout << "Expected start_i: " << backtrack_start << endl;
-            cout << "Found tree starts ";
-            for (int j: ss->tree) {
-                cout << j << " ";
-            } 
-            cout << endl;
-            cout << "Found seq starts: ";
-            for (int j: ss->seq) {
-                cout << j << " ";
-            }
-            cout << endl;
-            cout << "Chars matched: " << ss->length << endl << endl;
         }
         n_total++;
     }
