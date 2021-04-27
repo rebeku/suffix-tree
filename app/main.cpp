@@ -18,8 +18,6 @@ shared_ptr<s_tree> read_tree(string fname) {
     gFile.close();
     std::cout << "Read genome from file.  Length: " << genome.length() << endl;
 
-    cout << genome.substr(4319, 100) << endl;
-
     auto start = chrono::system_clock::now();
     shared_ptr<s_tree> tree = MYTREE.BuildTree(genome);
     auto end = chrono::system_clock::now();
@@ -30,12 +28,14 @@ shared_ptr<s_tree> read_tree(string fname) {
 }
 
 int main(){
-    string fname = "../data/genome_5_10000_100_500_0.1_0.txt";
+    // string fname = "../data/genome_5_10000_100_500_0.07_0.txt";
 
-    shared_ptr<s_tree> tree = read_tree(fname);
-    std::cout << "Now matching genes from this genome...";
+    // shared_ptr<s_tree> tree = read_tree(fname);
+    // std::cout << "Now matching genes from this genome...";
 
-    fname = "../data/genes_5_10000_100_500_0.1.csv";
+    string fname = "../data/genes_5_10000_100_500_0.1.csv";
+    shared_ptr<s_tree> tree;
+
     ifstream gFile(fname);
 
     // track accuracy
@@ -46,7 +46,7 @@ int main(){
     string word;
     int row_i = 0;
     
-    int source_g;
+    string source_g; // file name of source genome
     int start_i;
     int backtrack_start;
     string full_text;
@@ -58,7 +58,7 @@ int main(){
         while( getline(s, word, ',')) {
             try{
                 switch(row_i) {
-                    case 0: source_g = stoi(word); break;
+                    case 0: source_g = word; break;
                     case 1: start_i = stoi(word); break;
                     case 2: full_text = word; break;
                     case 3: break;
@@ -69,9 +69,13 @@ int main(){
             }
             row_i++;
         }
-        if (source_g > 0) {
-            break;
+
+        // time to load the next genome
+        if (fname != source_g) {
+            fname = source_g;
+            tree = read_tree(fname);
         }
+
         shared_ptr<Substring> ss = MYTREE.FindTopSubstring(tree, full_text);
 
         // if longest substring is aligned between seq and genome,
