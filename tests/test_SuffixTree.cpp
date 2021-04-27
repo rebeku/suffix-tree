@@ -218,7 +218,6 @@ TEST_F(test_SuffixTree, TestFindBulkTopNSubstrings) {
 
 	vector<string> sequences = {
 		"GAGGAACGAGGTGTCTTCCCC",
-		// There is a perfect match and it is not showing why?????
 		"AGAGCT",
 		"ATGCAATGTTAGTCCACTAATTGGCTATAG",
 		"CTTTAGAGTGGTGACGCGC",
