@@ -28,7 +28,6 @@ shared_ptr<s_tree> read_tree(string fname) {
 }
 
 int main(int argc, char** argv){
-    // string fname = "../data/genes_5_100000_1000_500_0.1.csv";
     string fname = argv[1];
     cout << "Reading test data from " << fname << endl;
 
@@ -39,6 +38,7 @@ int main(int argc, char** argv){
     // track accuracy
     int n_correct = 0;
     int n_total = 0;
+    int batch_size = 0;
     
     string row;
     string word;
@@ -48,6 +48,10 @@ int main(int argc, char** argv){
     int start_i;
     int backtrack_start;
     string full_text;
+
+    chrono::system_clock::time_point batch_start;
+    chrono::system_clock::time_point batch_end;
+    std::chrono::duration<double> elapsed_seconds;
 
     while( getline(gFile, row)) {
         stringstream s(row);
@@ -71,11 +75,16 @@ int main(int argc, char** argv){
         // time to load the next genome
         if (fname != source_g) {
             if (n_total > 0) {
+                batch_end = chrono::system_clock::now();
+                elapsed_seconds = batch_end - batch_start;
+                cout << "Matched " << batch_size << " genes from sample genome in " << elapsed_seconds.count() << " seconds\n";
                 cout << "Accuracy rate so far:  " << float(n_correct) / float(n_total) << endl;
-                cout << "Loading next genome" << endl;
+                cout << "Loading next genome..." << endl << endl;
             }
             fname = source_g;
             tree = read_tree(fname);
+            batch_size = 0;
+            batch_start = chrono::system_clock::now();
         }
 
         shared_ptr<Substring> ss = MYTREE.FindTopSubstring(tree, full_text);
@@ -90,9 +99,15 @@ int main(int argc, char** argv){
         } else if (ss->tree[0] == backtrack_start) {
             n_correct++;
         }
+
         n_total++;
+        batch_size++;
     }
 
+    batch_end = chrono::system_clock::now();
+    elapsed_seconds = batch_end - batch_start;
+    cout << "Matched " << batch_size << " genes from sample genome in " << elapsed_seconds.count() << " seconds\n";
+    cout << "\n\nFinal Summary:\n";
     cout << "Correctly matched " << n_correct << " out of " << n_total << " genes.\n";
     cout << "Accuracy rate:  " << float(n_correct) / float(n_total) << endl;
     return 0;
