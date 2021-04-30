@@ -1,8 +1,6 @@
 #ifndef SUFFIXTREE_H__
 #define SUFFIXTREE_H__
 
-#include <queue>
-
 #include "edge.h"
 #include "EdgeQueue.h"
 
