@@ -7,9 +7,7 @@
 
 using namespace std;
 
-SuffixTree MYTREE;
-
-shared_ptr<s_tree> read_tree(string fname) {
+shared_ptr<SuffixTree> read_tree(string fname) {
     string genome;
     ifstream gFile(fname);
     // This file should just have one line so getline will read it into genome.
@@ -18,7 +16,7 @@ shared_ptr<s_tree> read_tree(string fname) {
     std::cout << "Read genome from file '" << fname << "'.  Length: " << genome.length() << endl;
 
     auto start = chrono::system_clock::now();
-    shared_ptr<s_tree> tree = MYTREE.BuildTree(genome);
+    shared_ptr<SuffixTree> tree(new SuffixTree(genome));
     auto end = chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
 
@@ -30,7 +28,7 @@ int main(int argc, char** argv){
     string fname = argv[1];
     cout << "Reading test data from " << fname << endl;
 
-    shared_ptr<s_tree> tree;
+    shared_ptr<SuffixTree> tree;
 
     ifstream gFile(fname);
 
@@ -86,7 +84,7 @@ int main(int argc, char** argv){
             batch_start = chrono::system_clock::now();
         }
 
-        shared_ptr<substring> ss = MYTREE.FindTopSubstring(tree, full_text);
+        shared_ptr<substring> ss = tree->FindTopSubstring(full_text);
 
         // if longest substring is aligned between seq and genome,
         // where on genome would seq start?

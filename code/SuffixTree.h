@@ -7,20 +7,10 @@
 using namespace std;
 
 class SuffixTree{
-public:
-  SuffixTree();
-  ~SuffixTree();
-  shared_ptr<s_tree> BuildTree(string genome);
-  shared_ptr<substring> FindTopSubstring(shared_ptr<s_tree> tree, string sequence);
-  vector<shared_ptr<substring>> FindTopNSubstrings(shared_ptr<s_tree> tree, string sequence, int n);
-  vector<vector<shared_ptr<substring>>> FindBulkTopNSubstrings(shared_ptr<s_tree> tree, vector<string> sequences, int n);
-  void print(shared_ptr<s_tree> tree, int depth=0);
-
 private:
-  
-  // edge_match stores pertinent information about
-  // how far a suffix matches an edge.
-  
+  // this stores the root node of the actual suffix tree
+  shared_ptr<s_tree> tree;
+
   // init_node creates a new node
   shared_ptr<s_tree> init_node();
   
@@ -49,6 +39,15 @@ private:
   // and the chars for the suffix.
   void split(edge_match match, string suffix, int start);
   void insert(shared_ptr<s_tree> tree, string suffix, int index); 
+public:
+  SuffixTree(string genome);
+  ~SuffixTree();
+  // shared_ptr<s_tree> BuildTree(string genome);
+  shared_ptr<substring> FindTopSubstring(string sequence);
+  vector<shared_ptr<substring>> FindTopNSubstrings(string sequence, int n);
+  vector<vector<shared_ptr<substring>>> FindBulkTopNSubstrings(vector<string> sequences, int n);
+  void print(shared_ptr<s_tree> tree, int depth=0);
+  shared_ptr<s_tree> root();
 };
 
 #endif // EMPTY_H__

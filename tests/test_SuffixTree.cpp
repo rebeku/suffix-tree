@@ -52,35 +52,27 @@ TEST_F(test_SuffixTree, TestEdgeMatchComparison){
 }
 
 TEST_F(test_SuffixTree, TestBuildTree){
-    SuffixTree mytree;
-
 	string genome = "ACACAGT";
-	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
-    EXPECT_TRUE(tree);
-	EXPECT_EQ(tree->edges.size(), 4);
+	SuffixTree tree = SuffixTree(genome);
+	shared_ptr<s_tree> root = tree.root();
+    EXPECT_TRUE(root);
+	EXPECT_EQ(root->edges.size(), 4);
 
-	for (const auto& e: tree->edges) {
-		cout << "Edge has text: " << e->text << endl;
-		
-	}
-
-	EXPECT_EQ(tree->edges[0]->text, "A");
-	EXPECT_EQ(tree->edges[1]->text, "CA");
-	EXPECT_EQ(tree->edges[2]->text, "GT$");
-	EXPECT_EQ(tree->edges[3]->text, "T$");
-	EXPECT_EQ(tree->edges[0]->dst->edges[0]->text, "CA");
-	EXPECT_EQ(tree->edges[0]->dst->edges[0]->dst->edges[0]->text, "CAGT$");
-	EXPECT_EQ(tree->edges[0]->dst->edges[0]->dst->edges[1]->text, "GT$");
-	EXPECT_EQ(tree->edges[0]->dst->edges[1]->text, "GT$");
-	EXPECT_EQ(tree->edges[1]->dst->edges[0]->text, "CAGT$");
-	EXPECT_EQ(tree->edges[1]->dst->edges[1]->text, "GT$");
+	EXPECT_EQ(root->edges[0]->text, "A");
+	EXPECT_EQ(root->edges[1]->text, "CA");
+	EXPECT_EQ(root->edges[2]->text, "GT$");
+	EXPECT_EQ(root->edges[3]->text, "T$");
+	EXPECT_EQ(root->edges[0]->dst->edges[0]->text, "CA");
+	EXPECT_EQ(root->edges[0]->dst->edges[0]->dst->edges[0]->text, "CAGT$");
+	EXPECT_EQ(root->edges[0]->dst->edges[0]->dst->edges[1]->text, "GT$");
+	EXPECT_EQ(root->edges[0]->dst->edges[1]->text, "GT$");
+	EXPECT_EQ(root->edges[1]->dst->edges[0]->text, "CAGT$");
+	EXPECT_EQ(root->edges[1]->dst->edges[1]->text, "GT$");
 }
 
 TEST_F(test_SuffixTree, TestFindTopSubstringPerfectMatch){
-	SuffixTree mytree;
-
 	string genome = "ACACAGT";
-	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+	shared_ptr<SuffixTree> tree (new SuffixTree(genome));
     
     EXPECT_TRUE(tree);
 
@@ -89,7 +81,7 @@ TEST_F(test_SuffixTree, TestFindTopSubstringPerfectMatch){
 	for (int i = 0; i<genome.length(); i++) {
 		for (int j=i; j<genome.length(); j++) {
 			string seq = genome.substr(i, j-i);
-			match = mytree.FindTopSubstring(tree, seq);
+			match = tree->FindTopSubstring(seq);
 			if (match == NULL) {
 				continue;
 			}
@@ -108,10 +100,8 @@ TEST_F(test_SuffixTree, TestFindTopSubstringPerfectMatch){
 }
 
 TEST_F(test_SuffixTree, TestFindTopSubstringIrrelevantPrefix){
-	SuffixTree mytree;
-
 	string genome = "ACACAGT";
-	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+	shared_ptr<SuffixTree> tree (new SuffixTree(genome));
     
     EXPECT_TRUE(tree);
 
@@ -121,7 +111,7 @@ TEST_F(test_SuffixTree, TestFindTopSubstringIrrelevantPrefix){
 		// every substring of 2 chars or more will be the best match
 		for (int j=i+2; j<genome.length(); j++) {
 			string seq = "GGG" + genome.substr(i, j-i);
-			match = mytree.FindTopSubstring(tree, seq);
+			match = tree->FindTopSubstring(seq);
 			string label = to_string(i) + "|" + to_string(j);
 			// there are a bunch of duplicate substrings in this range
 			// only the earliest occurrance in the genome will be returned.
@@ -134,40 +124,36 @@ TEST_F(test_SuffixTree, TestFindTopSubstringIrrelevantPrefix){
 }
 
 TEST_F(test_SuffixTree, TestFindTopSubstringInvalidChars){
-	SuffixTree mytree;
-
 	string genome = "ACACAGT";
-	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+	shared_ptr<SuffixTree> tree (new SuffixTree(genome));
     
     EXPECT_TRUE(tree);
 
 	shared_ptr<substring> match;
-	match = mytree.FindTopSubstring(tree, "FCAG");
+	match = tree->FindTopSubstring("FCAG");
 	EXPECT_EQ(match->length, 3);
 	EXPECT_EQ(match->seq, 1);
 	EXPECT_EQ(match->tree, 3);
 
 
-	match = mytree.FindTopSubstring(tree, "CAGBBBACACA");
+	match = tree->FindTopSubstring("CAGBBBACACA");
 	EXPECT_EQ(match->length, 5);
 	EXPECT_EQ(match->seq, 6);
 	EXPECT_EQ(match->tree, 0);
 
 
-	match = mytree.FindTopSubstring(tree, "PFOOBR!");
+	match = tree->FindTopSubstring("PFOOBR!");
 	EXPECT_TRUE(match==NULL);
 }
 
 TEST_F(test_SuffixTree, TestFindTopNSubstrings) {
-	SuffixTree mytree;
-
 	string genome = "ACACAGT";
-	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+	shared_ptr<SuffixTree> tree (new SuffixTree(genome));
     
     EXPECT_TRUE(tree);
 
 	string seq = "CACA";
-	vector<shared_ptr<substring>> matches = mytree.FindTopNSubstrings(tree, seq, 3);
+	vector<shared_ptr<substring>> matches = tree->FindTopNSubstrings(seq, 3);
 	ASSERT_EQ(matches.size(), 3);
 
 	EXPECT_EQ(matches[0]->length, 4);
@@ -184,9 +170,8 @@ TEST_F(test_SuffixTree, TestFindTopNSubstrings) {
 }
 
 TEST_F(test_SuffixTree, TestFindBulkTopNSubstrings) {
-	SuffixTree mytree;
 	string genome = "CACGCAATGAGATGAGAGGTGTCTTCTCTGAAAGCACCGTTTAGAGTGGTGAGAATAAGTAGAGCTCACCGCGCAATGTTTGTCCACTAATTGGCTATAG";
-	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
+	shared_ptr<SuffixTree> tree (new SuffixTree(genome));
 
 	cout << "Built tree!\n";
     EXPECT_TRUE(tree);
@@ -201,9 +186,10 @@ TEST_F(test_SuffixTree, TestFindBulkTopNSubstrings) {
 
 	vector<shared_ptr<substring>> m;
 	for (string seq: sequences) {
-		m = mytree.FindTopNSubstrings(tree, seq, 3);
+		m = tree->FindTopNSubstrings(seq, 3);
 	}
-	vector<vector<shared_ptr<substring>>> bulk_matches = mytree.FindBulkTopNSubstrings(tree, sequences, 3);
+
+	vector<vector<shared_ptr<substring>>> bulk_matches = tree->FindBulkTopNSubstrings(sequences, 3);
 	ASSERT_EQ(bulk_matches.size(), 5);
 
 	vector<shared_ptr<substring>> match;

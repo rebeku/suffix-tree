@@ -1,6 +1,5 @@
 #include "SuffixTree.h"
 
-SuffixTree::SuffixTree() {}
 
 SuffixTree::~SuffixTree() {}
 
@@ -152,20 +151,18 @@ void SuffixTree::insert(shared_ptr<s_tree> tree, string suffix, int start) {
   }
 }
 
-shared_ptr<s_tree> SuffixTree::BuildTree(string genome) {
+SuffixTree::SuffixTree(string genome) {
   genome = genome + "$";
-  shared_ptr<s_tree> tree = init_node();
+  tree = init_node();
 
   // genome.length-1 because there is no need to add the final '$'
   for (int i = 0; i < genome.length() - 1; i++) {
     string suffix = genome.substr(i, string::npos);
     insert(tree, suffix, i);
   }
-  return tree;
 }
 
-vector<shared_ptr<substring>>
-SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> tree, string seq, int n) {
+vector<shared_ptr<substring>> SuffixTree::FindTopNSubstrings(string seq, int n) {
   edge_match cur_match;
   EdgeQueue q(n);
 
@@ -187,22 +184,23 @@ SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> tree, string seq, int n) {
   return q.toSubstrings();
 }
 
-shared_ptr<substring> SuffixTree::FindTopSubstring(shared_ptr<s_tree> tree,
-                                                   string seq) {
-  vector<shared_ptr<substring>> v = FindTopNSubstrings(tree, seq, 1);
+shared_ptr<substring> SuffixTree::FindTopSubstring(string seq) {
+  vector<shared_ptr<substring>> v = FindTopNSubstrings(seq, 1);
   if (v.size() == 0) {
     return NULL;
   }
   return v[0];
 }
 
-vector<vector<shared_ptr<substring>>>
-SuffixTree::FindBulkTopNSubstrings(shared_ptr<s_tree> tree,
-                                   vector<string> sequences, int n) {
+vector<vector<shared_ptr<substring>>> SuffixTree::FindBulkTopNSubstrings(vector<string> sequences, int n) {
   vector<vector<shared_ptr<substring>>> ret;
 
   for (auto &seq : sequences) {
-    ret.push_back(FindTopNSubstrings(tree, seq, n));
+    ret.push_back(FindTopNSubstrings(seq, n));
   }
   return ret;
+}
+
+shared_ptr<s_tree> SuffixTree::root() {
+    return tree;
 }
