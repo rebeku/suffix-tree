@@ -18,8 +18,6 @@ struct substring{
   }
 };
 
-
-
 class EdgeQueue{
 public:
     EdgeQueue(int cap);
@@ -33,6 +31,8 @@ public:
     void push(edge_match em);
     // construct Substrings from elements currently in queue
     vector<shared_ptr<substring>> toSubstrings();
+    int size(); // number of elements in queue
+    int s_chars_cutoff(); // minimum number of s_chars in queue
 
     private:
         int capacity;

@@ -1,4 +1,3 @@
-
 #include "EdgeQueue.h"
 
 EdgeQueue::EdgeQueue(int cap){
@@ -36,7 +35,6 @@ bool EdgeQueue::redundant(edge_match em) {
 }
 
 void EdgeQueue::push(edge_match em) {
-    cout << endl << "Pushing edge match with s_chars " << em.s_chars << endl; 
     if (redundant(em)) {
         return;
     } else if (edges.size() < capacity) {
@@ -66,4 +64,13 @@ vector<shared_ptr<substring>> EdgeQueue::toSubstrings() {
         ret[i] = shared_ptr<substring> (new substring(tree_start, seq_start, cur_match.s_chars));
       }
       return ret;
+}
+
+int EdgeQueue::size() {
+    return edges.size();
+}
+
+int EdgeQueue::s_chars_cutoff() {
+    int mindex = min_index();
+    return edges[mindex].s_chars;
 }

@@ -172,8 +172,8 @@ shared_ptr<s_tree> SuffixTree::BuildTree(string genome){
 }
 
 vector<shared_ptr<substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> tree, string seq, int n) {
-      edge_match cur_match;
-	  priority_queue<edge_match, vector<edge_match>, std::greater<edge_match>> q;
+    edge_match cur_match;
+    EdgeQueue q(n);
 
       for (int i = 0; i<seq.length(); i++) {
           cur_match = find(tree, seq.substr(i, string::npos), 0);
@@ -183,33 +183,14 @@ vector<shared_ptr<substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> 
           cur_match.s_start = i;
           q.push(cur_match);
 
-          if (q.size() > n) {
-              q.pop();
-          }
-
           // no need to continue searching if the best matches
           // have more characters than any remaining suffix of *seq*
-          if (q.size() == n && q.top().s_chars > seq.length() - i - 1) {
+          if (q.size() == n && q.s_chars_cutoff() > seq.length() - i - 1) {
             break;
           }
       }
 
-      // there may not b *n* matches
-      // so reduce the size of *n* if needed
-      n = q.size();
-      vector<shared_ptr<substring>> ret(n);
-      int i = 1;
-
-      while (!q.empty()) {
-        cur_match = q.top();
-        q.pop();
-
-        vector<int> tree_start = cur_match.matched->dst->starts;
-        vector<int> seq_start {cur_match.s_start};
-        ret[n - i] = shared_ptr<substring> (new substring(tree_start, seq_start, cur_match.s_chars));
-        i++;
-      }
-      return ret;
+      return q.toSubstrings();
   }
 
   shared_ptr<substring> SuffixTree::FindTopSubstring(shared_ptr<s_tree> tree, string seq) {
