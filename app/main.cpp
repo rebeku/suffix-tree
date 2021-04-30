@@ -9,7 +9,6 @@ using namespace std;
 
 SuffixTree MYTREE;
 
-
 shared_ptr<s_tree> read_tree(string fname) {
     string genome;
     ifstream gFile(fname);
