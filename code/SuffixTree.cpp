@@ -76,14 +76,14 @@ edge_match SuffixTree::find(shared_ptr<s_tree> tree, string suffix, int s_start,
             match.e_chars = count_match_chars(e->text, suffix);
             match.s_chars = match.e_chars + s_start;
             match.matched = e;
-
-            if (suffix.substr(0, 18) == "ATGAGATGAGAGGTGTCT") {
-                cout << "found a match for suffix 6\n";
-                cout << "e_chars: " << match.e_chars << endl;
-                cout << "s_chars: " << match.s_chars << endl;
-                cout << "null edge? " << (match.matched == NULL) << endl;
-            }
-            
+            // we can count on there being at least one match here
+            // because otherwise edge wouldn't be in tree
+            // if there are multiple matches we just keep the first
+            // otherwise we get into messy edge cases
+            // that are expensive to resolve
+            // long substrings are unlikely to match in multiple places
+            // so this should have minimal impact on utility
+            match.t_start = e->dst->starts[0];
 
             if (match.e_chars == e->text.length()) {
                 full_edge_match = true;

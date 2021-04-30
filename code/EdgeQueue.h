@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <unordered_set>
 
 #include "edge.h"
 
@@ -42,7 +43,11 @@ public:
         // for performance.  So we just keep edges in a vector
         // and sort before converting to Substrings.
         vector<edge_match> edges;
+        // TODO: Can I delete this?
+        // tree_ends is used to evaluate whether a new match
+        // is actually redundant with an existing match
+        unordered_set<int> tree_ends;
 
         int min_index();
-        bool redundant(edge_match em);
+        int nonredundantTreeStart(edge_match em);
 };

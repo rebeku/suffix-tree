@@ -24,20 +24,31 @@ int EdgeQueue::min_index() {
     return min_index;
 }
 
-bool EdgeQueue::redundant(edge_match em) {
+int EdgeQueue::nonredundantTreeStart(edge_match em) {
+    // cout << "testing nonredunt tree start for edge with t_start " << em.t_start << endl;
     for (auto em2: edges) {
         // if em is a substring of em2
-        if (em2.s_chars - em.s_chars == em.s_start - em2.s_start) {
-            return true;
+        if (em.t_start - em2.t_start == em.s_start - em2.s_start) {
+            // is there another tree start that would not be redundant?
+            for (int ts:  em.matched->dst->starts) {
+                if (ts != em.t_start) {
+                    return ts;
+                }
+            }
+
+            return -1;
         }
     }
-    return false;
+    return em.t_start;
 }
 
 void EdgeQueue::push(edge_match em) {
-    if (redundant(em)) {
+    // make sure there is a tree start that is not redundant
+    em.t_start = nonredundantTreeStart(em);
+    if (em.t_start == -1) {
         return;
-    } else if (edges.size() < capacity) {
+    }
+    if (edges.size() < capacity) {
         edges.push_back(em);
         return;
     }
@@ -59,7 +70,9 @@ vector<shared_ptr<substring>> EdgeQueue::toSubstrings() {
     vector<shared_ptr<substring>> ret(edges.size());
     for (int i=0; i<edges.size(); i++) {
         cur_match = edges[i];
-        vector<int> tree_start = cur_match.matched->dst->starts;
+
+        // TODO: refactor to make these not vectors!
+        vector<int> tree_start{cur_match.t_start};
         vector<int> seq_start {cur_match.s_start};
         ret[i] = shared_ptr<substring> (new substring(tree_start, seq_start, cur_match.s_chars));
       }

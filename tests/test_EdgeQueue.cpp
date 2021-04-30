@@ -24,6 +24,7 @@ edge_match make_edge_match() {
 
 	em.s_chars = 7;
 	em.s_start = 0;
+	em.t_start = 2;
 	return em;
 }
 
@@ -49,14 +50,24 @@ protected:
 TEST_F(test_EdgeQueue, TestEdgePush){
 	edge_match a = make_edge_match();
 	a.s_chars = 5;
+	a.s_start = 43;
+	a.t_start = 104;
 	edge_match b = make_edge_match();
 	b.s_chars = 3;
+	b.s_start = 89;
+	b.t_start = 6878;
 	edge_match c = make_edge_match();
 	c.s_chars = 10;
+	c.s_start = 2;
+	c.t_start = 350;
 	edge_match d = make_edge_match();
 	d.s_chars = 2;
+	d.s_start = 16;
+	d.t_start = 44;
 	edge_match e = make_edge_match();
 	e.s_chars = 8;
+	e.s_start = 24;
+	e.t_start = 842;
 
 	EdgeQueue q(3);
 	vector<shared_ptr<substring>> ss;
@@ -99,18 +110,23 @@ TEST_F(test_EdgeQueue, TestRedundantEdges){
 	edge_match a = make_edge_match();
 	a.s_chars = 10;
 	a.s_start = 4;
+	a.t_start = 23;
 	edge_match b = make_edge_match();
 	b.s_chars = 9;
 	b.s_start = 5;
+	b.t_start = 24;
 	edge_match c = make_edge_match();
 	c.s_chars = 8;
 	c.s_start = 6;
+	c.t_start = 25;
 	edge_match d = make_edge_match();
 	d.s_chars = 7;
 	d.s_start = 7;
+	d.t_start = 26;
 	edge_match e = make_edge_match();
 	e.s_chars = 6;
 	e.s_start = 8;
+	e.t_start = 27;
 
 	EdgeQueue q(3);
 	vector<shared_ptr<substring>> ss;
