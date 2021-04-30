@@ -171,7 +171,7 @@ shared_ptr<s_tree> SuffixTree::BuildTree(string genome){
     return tree;
 }
 
-vector<shared_ptr<Substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> tree, string seq, int n) {
+vector<shared_ptr<substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> tree, string seq, int n) {
       edge_match cur_match;
 	  priority_queue<edge_match, vector<edge_match>, std::greater<edge_match>> q;
 
@@ -197,7 +197,7 @@ vector<shared_ptr<Substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> 
       // there may not b *n* matches
       // so reduce the size of *n* if needed
       n = q.size();
-      vector<shared_ptr<Substring>> ret(n);
+      vector<shared_ptr<substring>> ret(n);
       int i = 1;
 
       while (!q.empty()) {
@@ -206,14 +206,14 @@ vector<shared_ptr<Substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> 
 
         vector<int> tree_start = cur_match.matched->dst->starts;
         vector<int> seq_start {cur_match.s_start};
-        ret[n - i] = shared_ptr<Substring> (new Substring(tree_start, seq_start, cur_match.s_chars));
+        ret[n - i] = shared_ptr<substring> (new substring(tree_start, seq_start, cur_match.s_chars));
         i++;
       }
       return ret;
   }
 
-  shared_ptr<Substring> SuffixTree::FindTopSubstring(shared_ptr<s_tree> tree, string seq) {
-    vector<shared_ptr<Substring>> v = FindTopNSubstrings(tree, seq, 1);
+  shared_ptr<substring> SuffixTree::FindTopSubstring(shared_ptr<s_tree> tree, string seq) {
+    vector<shared_ptr<substring>> v = FindTopNSubstrings(tree, seq, 1);
     if (v.size() == 0) {
         return NULL;
     }
@@ -221,8 +221,8 @@ vector<shared_ptr<Substring>> SuffixTree::FindTopNSubstrings(shared_ptr<s_tree> 
   }
 
 
-  vector<vector<shared_ptr<Substring>>> SuffixTree::FindBulkTopNSubstrings(shared_ptr<s_tree> tree, vector<string> sequences, int n) {
-      vector<vector<shared_ptr<Substring>>> ret;
+  vector<vector<shared_ptr<substring>>> SuffixTree::FindBulkTopNSubstrings(shared_ptr<s_tree> tree, vector<string> sequences, int n) {
+      vector<vector<shared_ptr<substring>>> ret;
 
         for (auto &seq : sequences) {
             cout << seq << endl;

@@ -87,7 +87,7 @@ int main(int argc, char** argv){
             batch_start = chrono::system_clock::now();
         }
 
-        shared_ptr<Substring> ss = MYTREE.FindTopSubstring(tree, full_text);
+        shared_ptr<substring> ss = MYTREE.FindTopSubstring(tree, full_text);
 
         // if longest substring is aligned between seq and genome,
         // where on genome would seq start?

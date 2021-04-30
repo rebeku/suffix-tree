@@ -1,7 +1,24 @@
 #include <algorithm>
-#include "SuffixTree.h"
+#include <iostream>
+
+#include "edge.h"
 
 using namespace std;
+
+// This stores relevant information about the result
+// of a substring match
+struct substring{
+  vector<int> tree; // starting pts in tree
+  vector<int> seq; // starting pts in seq
+  int length;
+  substring(vector<int> tree_start, vector<int> seq_start, int len){
+    tree = tree_start;
+    seq = seq_start;
+    length = len;
+  }
+};
+
+
 
 class EdgeQueue{
 public:
@@ -15,7 +32,7 @@ public:
     // will be overwritten
     void push(edge_match em);
     // construct Substrings from elements currently in queue
-    vector<shared_ptr<Substring>> toSubstrings();
+    vector<shared_ptr<substring>> toSubstrings();
 
     private:
         int capacity;

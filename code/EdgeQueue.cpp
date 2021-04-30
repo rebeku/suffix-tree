@@ -55,15 +55,15 @@ bool greater_than(edge_match a, edge_match b) {
     return a > b;
 }
 
-vector<shared_ptr<Substring>> EdgeQueue::toSubstrings() {
+vector<shared_ptr<substring>> EdgeQueue::toSubstrings() {
     sort (edges.begin(), edges.end(), greater_than);
     edge_match cur_match;
-    vector<shared_ptr<Substring>> ret(edges.size());
+    vector<shared_ptr<substring>> ret(edges.size());
     for (int i=0; i<edges.size(); i++) {
         cur_match = edges[i];
         vector<int> tree_start = cur_match.matched->dst->starts;
         vector<int> seq_start {cur_match.s_start};
-        ret[i] = shared_ptr<Substring> (new Substring(tree_start, seq_start, cur_match.s_chars));
+        ret[i] = shared_ptr<substring> (new substring(tree_start, seq_start, cur_match.s_chars));
       }
       return ret;
 }

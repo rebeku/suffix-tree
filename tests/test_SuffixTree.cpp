@@ -98,7 +98,7 @@ TEST_F(test_SuffixTree, TestFindTopSubstringPerfectMatch){
     
     EXPECT_TRUE(tree);
 
-	shared_ptr<Substring> match;
+	shared_ptr<substring> match;
 
 	for (int i = 0; i<genome.length(); i++) {
 		for (int j=i; j<genome.length(); j++) {
@@ -124,7 +124,7 @@ TEST_F(test_SuffixTree, TestFindTopSubstringIrrelevantPrefix){
     
     EXPECT_TRUE(tree);
 
-	shared_ptr<Substring> match;
+	shared_ptr<substring> match;
 
 	for (int i = 0; i<genome.length(); i++) {
 		// every substring of 2 chars or more will be the best match
@@ -146,7 +146,7 @@ TEST_F(test_SuffixTree, TestFindTopSubstringInvalidChars){
     
     EXPECT_TRUE(tree);
 
-	shared_ptr<Substring> match;
+	shared_ptr<substring> match;
 	match = mytree.FindTopSubstring(tree, "FCAG");
 	EXPECT_EQ(match->length, 3);
 	EXPECT_EQ(match->seq[0], 1);
@@ -172,7 +172,7 @@ TEST_F(test_SuffixTree, TestFindTopNSubstrings) {
     EXPECT_TRUE(tree);
 
 	string seq = "CACA";
-	vector<shared_ptr<Substring>> matches = mytree.FindTopNSubstrings(tree, seq, 3);
+	vector<shared_ptr<substring>> matches = mytree.FindTopNSubstrings(tree, seq, 3);
 	ASSERT_EQ(matches.size(), 3);
 
 	EXPECT_EQ(matches[0]->length, 4);
@@ -198,7 +198,7 @@ TEST_F(test_SuffixTree, TestWeirdThing) {
     EXPECT_TRUE(tree);
 
 	string seq = "AGAGCT";
-	vector<shared_ptr<Substring>> match = mytree.FindTopNSubstrings(tree, seq, 3);
+	vector<shared_ptr<substring>> match = mytree.FindTopNSubstrings(tree, seq, 3);
 	cout << match[0]->length << " " << match[0]->seq[0] << " " << match[0]->tree[0] << endl;
 	EXPECT_TRUE(match[0]->length == seq.length());
 }
@@ -223,14 +223,14 @@ TEST_F(test_SuffixTree, TestFindBulkTopNSubstrings) {
 		"TATTGGTGTCTTCTCTGT"
 		};
 
-	vector<shared_ptr<Substring>> m;
+	vector<shared_ptr<substring>> m;
 	for (string seq: sequences) {
 		m = mytree.FindTopNSubstrings(tree, seq, 3);
 	}
-	vector<vector<shared_ptr<Substring>>> bulk_matches = mytree.FindBulkTopNSubstrings(tree, sequences, 3);
+	vector<vector<shared_ptr<substring>>> bulk_matches = mytree.FindBulkTopNSubstrings(tree, sequences, 3);
 	ASSERT_EQ(bulk_matches.size(), 5);
 
-	vector<shared_ptr<Substring>> match;
+	vector<shared_ptr<substring>> match;
 	for (int i=0; i<5; i++) {
 		match = bulk_matches[i];
 		EXPECT_TRUE(match[0]->length >= match[1]->length);

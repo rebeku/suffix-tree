@@ -59,7 +59,7 @@ TEST_F(test_EdgeQueue, TestEdgePush){
 	e.s_chars = 8;
 
 	EdgeQueue q(3);
-	vector<shared_ptr<Substring>> ss;
+	vector<shared_ptr<substring>> ss;
 
 	q.push(a);
 	ss = q.toSubstrings();
@@ -113,7 +113,7 @@ TEST_F(test_EdgeQueue, TestRedundantEdges){
 	e.s_start = 8;
 
 	EdgeQueue q(3);
-	vector<shared_ptr<Substring>> ss;
+	vector<shared_ptr<substring>> ss;
 
 	q.push(a);
 	EXPECT_EQ(q.toSubstrings().size(), 1);
