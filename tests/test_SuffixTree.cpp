@@ -196,7 +196,6 @@ TEST_F(test_SuffixTree, TestWeirdThing) {
 
 	cout << "Built tree!\n";
     EXPECT_TRUE(tree);
-	mytree.print(tree);
 
 	string seq = "AGAGCT";
 	vector<shared_ptr<Substring>> match = mytree.FindTopNSubstrings(tree, seq, 3);
