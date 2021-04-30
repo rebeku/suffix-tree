@@ -185,7 +185,7 @@ TEST_F(test_SuffixTree, TestFindTopNSubstrings) {
 
 	EXPECT_EQ(matches[2]->length, 2);
 	EXPECT_TRUE(expect_in(matches[2]->seq, 2, "seq 2"));
-	EXPECT_TRUE(expect_in(matches[2]->tree, 1, "tree 2"));
+	EXPECT_TRUE(expect_in(matches[2]->tree, 3, "tree 2"));
 }
 
 TEST_F(test_SuffixTree, TestWeirdThing) {
