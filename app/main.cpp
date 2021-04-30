@@ -91,12 +91,12 @@ int main(int argc, char** argv){
 
         // if longest substring is aligned between seq and genome,
         // where on genome would seq start?
-        backtrack_start = start_i + ss->seq[0];
+        backtrack_start = start_i + ss->seq;
         
         if (ss == NULL) {
             cout << "Found no matches for '" << full_text << "' at all.\n";
             cout << "Full row: " << row << endl;
-        } else if (ss->tree[0] == backtrack_start) {
+        } else if (ss->tree == backtrack_start) {
             n_correct++;
         }
 

@@ -26,7 +26,7 @@ This app reads test data (simulated genomes and genes with mutation) from a file
 ```
 For example:
 ```
-./run_app ../data/genes_5_100000_5000_100_0.1.csv
+./run_app ../data/genes_5_100000_5000_200_0.1.csv
 ```
 All of the files in the `data` directory with the `.csv` suffix are valid and should be readable by the program.  They contain test data with different parameters, which are encoded in the file names.  The `.txt` files are referenced in the `.csv` file and cannot be passed to the main app.
 

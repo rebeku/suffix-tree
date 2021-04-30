@@ -9,13 +9,23 @@ using namespace std;
 // This stores relevant information about the result
 // of a substring match
 struct substring{
-  vector<int> tree; // starting pts in tree
-  vector<int> seq; // starting pts in seq
+  int tree; // starting pts in tree
+  int seq; // starting pts in seq
   int length;
-  substring(vector<int> tree_start, vector<int> seq_start, int len){
+  substring(int tree_start, int seq_start, int len){
     tree = tree_start;
     seq = seq_start;
     length = len;
+  }
+  friend bool operator== (const shared_ptr<substring> a, const shared_ptr<substring> b) {
+    if (a->tree != b->tree) {
+      return false;
+    } else if (a->seq != b->seq) {
+      return false;
+    } else if (a->length != b->length) {
+      return false;
+    }
+    return true;
   }
 };
 

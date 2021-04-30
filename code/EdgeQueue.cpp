@@ -70,11 +70,7 @@ vector<shared_ptr<substring>> EdgeQueue::toSubstrings() {
     vector<shared_ptr<substring>> ret(edges.size());
     for (int i=0; i<edges.size(); i++) {
         cur_match = edges[i];
-
-        // TODO: refactor to make these not vectors!
-        vector<int> tree_start{cur_match.t_start};
-        vector<int> seq_start {cur_match.s_start};
-        ret[i] = shared_ptr<substring> (new substring(tree_start, seq_start, cur_match.s_chars));
+        ret[i] = shared_ptr<substring> (new substring(cur_match.t_start, cur_match.s_start, cur_match.s_chars));
       }
       return ret;
 }

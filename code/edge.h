@@ -19,18 +19,6 @@ struct s_tree{
 struct edge{
   string text;
   shared_ptr<s_tree> dst;
-
-  friend bool operator< (const shared_ptr<edge> a, const shared_ptr<edge> b) {
-    int j = min(a->text.size(), b->text.size());
-    for (int i=0; i<j; i++) {
-      if (a->text[i] < b->text[i]) {
-        return true;
-      } else if (a->text[i] > b->text[i]) {
-        return false;
-      }
-    }
-    return j == a->text.size();
-  }
 };
 
 struct edge_match {
@@ -42,6 +30,7 @@ struct edge_match {
   shared_ptr<s_tree> src = NULL; // source node of matched edge
 
   edge_match(){}
+
   friend bool operator> (const edge_match a, const edge_match b) {
     return a.s_chars > b.s_chars;
   }
@@ -57,6 +46,8 @@ struct edge_match {
     } else if (a.s_chars != b.s_chars) {
       return false;
     } else if (a.s_start != b.s_start) {
+      return false;
+    } else if (a.t_start != b.t_start) {
       return false;
     } else {
       return true;

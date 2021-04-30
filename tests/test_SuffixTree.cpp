@@ -10,15 +10,6 @@
 
 using namespace std;
 
-bool expect_in(vector<int> vec, int a, string label) {
-	for (int b: vec) {
-		if (b == a) {
-			return true;
-		}
-	}
-	return false;
-}
-
 class test_SuffixTree : public ::testing::Test {
 protected:
 	// This function runs only once before any TEST_F function
@@ -58,22 +49,6 @@ TEST_F(test_SuffixTree, TestEdgeMatchComparison){
 	q.pop();
 	
 	EXPECT_EQ(q.top().s_chars, c.s_chars);
-
-}
-
-TEST_F(test_SuffixTree, TestEdgeComparison){
-	shared_ptr<edge> a (new edge);
-	a->text = "ACA";
-	shared_ptr<edge> b (new edge);
-	b->text = "AAAAAA";
-	shared_ptr<edge> c (new edge);
-	c->text = "C";
-	EXPECT_TRUE(b < a);
-	EXPECT_TRUE(a < c);
-	EXPECT_FALSE(c < b);
-	EXPECT_TRUE(c > b);
-
-
 }
 
 TEST_F(test_SuffixTree, TestBuildTree){
@@ -88,6 +63,17 @@ TEST_F(test_SuffixTree, TestBuildTree){
 		cout << "Edge has text: " << e->text << endl;
 		
 	}
+
+	EXPECT_EQ(tree->edges[0]->text, "A");
+	EXPECT_EQ(tree->edges[1]->text, "CA");
+	EXPECT_EQ(tree->edges[2]->text, "GT$");
+	EXPECT_EQ(tree->edges[3]->text, "T$");
+	EXPECT_EQ(tree->edges[0]->dst->edges[0]->text, "CA");
+	EXPECT_EQ(tree->edges[0]->dst->edges[0]->dst->edges[0]->text, "CAGT$");
+	EXPECT_EQ(tree->edges[0]->dst->edges[0]->dst->edges[1]->text, "GT$");
+	EXPECT_EQ(tree->edges[0]->dst->edges[1]->text, "GT$");
+	EXPECT_EQ(tree->edges[1]->dst->edges[0]->text, "CAGT$");
+	EXPECT_EQ(tree->edges[1]->dst->edges[1]->text, "GT$");
 }
 
 TEST_F(test_SuffixTree, TestFindTopSubstringPerfectMatch){
@@ -114,9 +100,9 @@ TEST_F(test_SuffixTree, TestFindTopSubstringPerfectMatch){
 			// there are a bunch of duplicate substrings in this range
 			// only the earliest occurrance in the genome will be returned.
 			if (i < 2 || i > 4) {
-				EXPECT_TRUE(expect_in(match->tree, i, label)) << label;
+				EXPECT_EQ(match->tree, i) << label;
 			}
-			EXPECT_TRUE(expect_in(match->seq, 0, label)) << label;
+			EXPECT_EQ(match->seq, 0) << label;
 		}
 	}
 }
@@ -140,9 +126,9 @@ TEST_F(test_SuffixTree, TestFindTopSubstringIrrelevantPrefix){
 			// there are a bunch of duplicate substrings in this range
 			// only the earliest occurrance in the genome will be returned.
 			if (i < 2 || i > 4) {
-				EXPECT_TRUE(expect_in(match->tree, i, label)) << label;
+				EXPECT_EQ(match->tree, i) << label;
 			}
-			EXPECT_TRUE(expect_in(match->seq, 3, label)) << label;
+			EXPECT_EQ(match->seq, 3) << label;
 		}
 	}
 }
@@ -158,14 +144,14 @@ TEST_F(test_SuffixTree, TestFindTopSubstringInvalidChars){
 	shared_ptr<substring> match;
 	match = mytree.FindTopSubstring(tree, "FCAG");
 	EXPECT_EQ(match->length, 3);
-	EXPECT_EQ(match->seq[0], 1);
-	EXPECT_EQ(match->tree[0], 3);
+	EXPECT_EQ(match->seq, 1);
+	EXPECT_EQ(match->tree, 3);
 
 
 	match = mytree.FindTopSubstring(tree, "CAGBBBACACA");
 	EXPECT_EQ(match->length, 5);
-	EXPECT_EQ(match->seq[0], 6);
-	EXPECT_EQ(match->tree[0], 0);
+	EXPECT_EQ(match->seq, 6);
+	EXPECT_EQ(match->tree, 0);
 
 
 	match = mytree.FindTopSubstring(tree, "PFOOBR!");
@@ -185,39 +171,20 @@ TEST_F(test_SuffixTree, TestFindTopNSubstrings) {
 	ASSERT_EQ(matches.size(), 3);
 
 	EXPECT_EQ(matches[0]->length, 4);
-	EXPECT_TRUE(expect_in(matches[0]->seq, 0, "seq 0"));
-	EXPECT_TRUE(expect_in(matches[0]->tree, 1, "tree 0"));
+	EXPECT_EQ(matches[0]->seq, 0);
+	EXPECT_EQ(matches[0]->tree, 1);
 
 	EXPECT_EQ(matches[1]->length, 3);
-	EXPECT_TRUE(expect_in(matches[1]->seq, 1, "seq 1"));
-	EXPECT_TRUE(expect_in(matches[1]->tree, 0, "tree 1"));
+	EXPECT_EQ(matches[1]->seq, 1);
+	EXPECT_EQ(matches[1]->tree, 0);
 
 	EXPECT_EQ(matches[2]->length, 2);
-	EXPECT_TRUE(expect_in(matches[2]->seq, 2, "seq 2"));
-	EXPECT_TRUE(expect_in(matches[2]->tree, 3, "tree 2"));
-}
-
-TEST_F(test_SuffixTree, TestWeirdThing) {
-	SuffixTree mytree;
-	
-	string genome = "CACGCAATGAGATGAGAGGTGTCTTCTCTGAAAGCACCGTTTAGAGTGGTGAGAATAAGTAGAGCTCACCGCGCAATGTTTGTCCACTAATTGGCTATAG";
-	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
-
-	cout << "Built tree!\n";
-    EXPECT_TRUE(tree);
-
-	string seq = "AGAGCT";
-	vector<shared_ptr<substring>> match = mytree.FindTopNSubstrings(tree, seq, 3);
-	cout << match[0]->length << " " << match[0]->seq[0] << " " << match[0]->tree[0] << endl;
-	EXPECT_TRUE(match[0]->length == seq.length());
+	EXPECT_EQ(matches[2]->seq, 2);
+	EXPECT_EQ(matches[2]->tree, 3);
 }
 
 TEST_F(test_SuffixTree, TestFindBulkTopNSubstrings) {
 	SuffixTree mytree;
-	if (true) {
-		return;
-	}
-	
 	string genome = "CACGCAATGAGATGAGAGGTGTCTTCTCTGAAAGCACCGTTTAGAGTGGTGAGAATAAGTAGAGCTCACCGCGCAATGTTTGTCCACTAATTGGCTATAG";
 	shared_ptr<s_tree> tree = mytree.BuildTree(genome);
 
@@ -248,9 +215,80 @@ TEST_F(test_SuffixTree, TestFindBulkTopNSubstrings) {
 		for (int j = 0; j< 3; j++) {
 			cout << "i: " << i << " j: " << j << endl;
 			cout << "length: " << match[j]->length;
-			cout << " seq match: " << match[j]->seq[0];
-			cout << " number of tree matches: " << match[j]->tree.size();
-			cout << " first tree match: " << match[j]->tree[0] << endl << endl;
+			cout << " seq match: " << match[j]->seq << " tree match: " << match[j]->tree << endl << endl;
 		}
 	}
+
+	shared_ptr<substring> expected(new substring(15,7,11));
+	EXPECT_TRUE(bulk_matches[0][0]==expected);
+	
+	expected->length = 4;
+	expected->tree = 15;
+	expected->seq = 0;
+	EXPECT_TRUE(bulk_matches[0][1] == expected);
+
+	expected->length = 3;
+	expected->seq = 5;
+	expected->tree = 1;
+	EXPECT_TRUE(bulk_matches[0][2] == expected);
+	
+	expected->length = 6;
+	expected->seq = 0;
+	expected->tree = 60;
+	EXPECT_TRUE(bulk_matches[1][0] == expected);
+	
+	expected->length = 3;
+	expected->seq = 3;
+	expected->tree = 93;
+	EXPECT_TRUE(bulk_matches[1][1] == expected);
+
+	expected->length = 2;
+	expected->seq = 4;
+	expected->tree = 22;
+	EXPECT_TRUE(bulk_matches[1][2] == expected);
+	
+	expected->length = 8;
+	expected->seq = 2;
+	expected->tree = 72;
+	EXPECT_TRUE(bulk_matches[2][0] == expected);
+	
+	expected->length = 4;
+	expected->seq = 8;
+	expected->tree = 40;
+	EXPECT_TRUE(bulk_matches[2][1] == expected);
+	
+	expected->length = 3;
+	expected->seq = 7;
+	expected->tree = 38;
+	EXPECT_TRUE(bulk_matches[2][2] == expected);
+	
+	expected->length = 13;
+	expected->seq = 1;
+	expected->tree = 39;
+	EXPECT_TRUE(bulk_matches[3][0] == expected);
+	
+	expected->length = 5;
+	expected->seq = 14;
+	expected->tree = 69;
+	EXPECT_TRUE(bulk_matches[3][1] == expected);
+	
+	expected->length = 4;
+	expected->seq = 13;
+	expected->tree = 1;
+	EXPECT_TRUE(bulk_matches[3][2] == expected);
+	
+	expected->length = 13;
+	expected->seq = 4;
+	expected->tree = 17;
+	EXPECT_TRUE(bulk_matches[4][0] == expected);
+	
+	expected->length = 5;
+	expected->seq = 1;
+	expected->tree = 89;
+	EXPECT_TRUE(bulk_matches[4][1] == expected);
+	
+	expected->length = 5;
+	expected->seq = 3;
+	expected->tree = 46;
+	EXPECT_TRUE(bulk_matches[4][2] == expected);
 }
