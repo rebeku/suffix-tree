@@ -42,7 +42,6 @@ private:
 public:
   SuffixTree(string genome);
   ~SuffixTree();
-  // shared_ptr<s_tree> BuildTree(string genome);
   shared_ptr<substring> FindTopSubstring(string sequence);
   vector<shared_ptr<substring>> FindTopNSubstrings(string sequence, int n);
   vector<vector<shared_ptr<substring>>> FindBulkTopNSubstrings(vector<string> sequences, int n);

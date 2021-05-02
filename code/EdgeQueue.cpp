@@ -23,12 +23,9 @@ int EdgeQueue::min_index() {
 }
 
 int EdgeQueue::nonredundantTreeStart(edge_match em) {
-  // cout << "testing nonredunt tree start for edge with t_start " << em.t_start
-  // << endl;
   for (auto em2 : edges) {
     // if em is a substring of em2
     if (em.t_start - em2.t_start == em.s_start - em2.s_start) {
-      // is there another tree start that would not be redundant?
       for (int ts : em.matched->dst->starts) {
         if (ts != em.t_start) {
           return ts;

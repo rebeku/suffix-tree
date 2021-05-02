@@ -173,7 +173,6 @@ TEST_F(test_SuffixTree, TestFindBulkTopNSubstrings) {
 	string genome = "CACGCAATGAGATGAGAGGTGTCTTCTCTGAAAGCACCGTTTAGAGTGGTGAGAATAAGTAGAGCTCACCGCGCAATGTTTGTCCACTAATTGGCTATAG";
 	shared_ptr<SuffixTree> tree (new SuffixTree(genome));
 
-	cout << "Built tree!\n";
     EXPECT_TRUE(tree);
 
 	vector<string> sequences = {
@@ -197,12 +196,6 @@ TEST_F(test_SuffixTree, TestFindBulkTopNSubstrings) {
 		match = bulk_matches[i];
 		EXPECT_TRUE(match[0]->length >= match[1]->length);
 		EXPECT_TRUE(match[1]->length >= match[2]->length);
-
-		for (int j = 0; j< 3; j++) {
-			cout << "i: " << i << " j: " << j << endl;
-			cout << "length: " << match[j]->length;
-			cout << " seq match: " << match[j]->seq << " tree match: " << match[j]->tree << endl << endl;
-		}
 	}
 
 	shared_ptr<substring> expected(new substring(15,7,11));
