@@ -20,7 +20,6 @@ shared_ptr<SuffixTree> read_tree(string fname) {
     auto end = chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
 
-    std::cout << "Built suffix tree in " <<  elapsed_seconds.count() << " seconds" << endl;
     return tree;
 }
 

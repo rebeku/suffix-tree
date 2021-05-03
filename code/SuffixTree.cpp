@@ -136,6 +136,7 @@ void SuffixTree::insert(shared_ptr<s_tree> tree, string suffix, int start) {
   if (match.e_chars == 0) {
     tree = match.src;
     int i = tree->edges.size();
+
     tree->edges.push_back(shared_ptr<edge>(new edge));
     // don't re-save chars that are already matched by higher layers of tree
     tree->edges[i]->text = suffix.substr(match.s_chars, string::npos);
